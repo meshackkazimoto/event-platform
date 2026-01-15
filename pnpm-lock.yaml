@@ -14,6 +14,9 @@ importers:
 
   apps/api:
     dependencies:
+      '@event-platform/db':
+        specifier: workspace:*
+        version: link:../../packages/db
       axios:
         specifier: ^1.13.2
         version: 1.13.2
@@ -38,7 +41,7 @@ importers:
         version: 9.0.10
       '@types/node':
         specifier: ^20
-        version: 20.19.29
+        version: 20.19.30
       '@types/react':
         specifier: ^19
         version: 19.2.8
@@ -75,7 +78,7 @@ importers:
         version: 4.1.18
       '@types/node':
         specifier: ^20
-        version: 20.19.29
+        version: 20.19.30
       '@types/react':
         specifier: ^19
         version: 19.2.8
@@ -106,7 +109,7 @@ importers:
     devDependencies:
       '@types/node':
         specifier: ^20.19.29
-        version: 20.19.29
+        version: 20.19.30
       dotenv:
         specifier: ^17.2.3
         version: 17.2.3
@@ -621,8 +624,8 @@ packages:
   '@types/ms@2.1.0':
     resolution: {integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==}
 
-  '@types/node@20.19.29':
-    resolution: {integrity: sha512-YrT9ArrGaHForBaCNwFjoqJWmn8G1Pr7+BH/vwyLHciA9qT/wSiuOhxGCT50JA5xLvFBd6PIiGkE3afxcPE1nw==}
+  '@types/node@20.19.30':
+    resolution: {integrity: sha512-WJtwWJu7UdlvzEAUm484QNg5eAoq5QR08KDNx7g45Usrs2NtOPiX8ugDqmKdXkyL03rBqU5dYNYVQetEpBHq2g==}
 
   '@types/react-dom@19.2.3':
     resolution: {integrity: sha512-jp2L/eY6fn+KgVVQAOqYItbF0VY/YApe5Mz2F0aykSO8gx31bYCZyvSeYxCHKvzHG5eZjc+zyaS5BrBWya2+kQ==}
@@ -2705,11 +2708,11 @@ snapshots:
   '@types/jsonwebtoken@9.0.10':
     dependencies:
       '@types/ms': 2.1.0
-      '@types/node': 20.19.29
+      '@types/node': 20.19.30
 
   '@types/ms@2.1.0': {}
 
-  '@types/node@20.19.29':
+  '@types/node@20.19.30':
     dependencies:
       undici-types: 6.21.0
 
