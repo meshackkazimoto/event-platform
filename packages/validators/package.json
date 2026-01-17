@@ -1,0 +1,19 @@
+{
+  "name": "@event-platform/validators",
+  "version": "0.0.1",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.27.0",
+  "devDependencies": {
+    "@event-platform/tsconfig": "workspace:*",
+    "typescript": "^5.9.3",
+    "zod": "^4.3.5"
+  }
+}

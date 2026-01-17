@@ -4,6 +4,7 @@ import "@event-platform/ui/globals.css";
 
 import type { Locale } from "@event-platform/locale";
 import { LocaleProvider } from "@/providers/locale-provider";
+import QueryProvider from "@/providers/query-provider";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -39,8 +40,12 @@ export default async function LocaleRootLayout({
 
   return (
     <html lang={locale} suppressHydrationWarning>
-      <body className={`${poppins.variable} ${jetbrains.variable} font-sans antialiased`}>
-        <LocaleProvider initialLocale={locale}>{children}</LocaleProvider>
+      <body
+        className={`${poppins.variable} ${jetbrains.variable} font-sans antialiased`}
+      >
+        <QueryProvider>
+          <LocaleProvider initialLocale={locale}>{children}</LocaleProvider>
+        </QueryProvider>
       </body>
     </html>
   );
