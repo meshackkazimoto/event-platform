@@ -3,15 +3,10 @@
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useLocale } from "@/providers/locale-provider";
+import { useTheme } from "@/providers/theme-provider";
 import type { Locale } from "@event-platform/locale";
 
 type Theme = "light" | "dark";
-
-function setHtmlTheme(theme: Theme) {
-  const root = document.documentElement;
-  if (theme === "dark") root.classList.add("dark");
-  else root.classList.remove("dark");
-}
 
 function setLocaleCookie(locale: Locale) {
   document.cookie = `locale=${locale}; path=/; max-age=${60 * 60 * 24 * 365}`;
@@ -22,32 +17,15 @@ export default function LandingControls() {
   const pathname = usePathname();
 
   const { locale, setLocale, t } = useLocale();
-
-  const [theme, setTheme] = useState<Theme>("light");
-
-  // init theme from localStorage
-  useEffect(() => {
-    const savedTheme = (localStorage.getItem("theme") as Theme | null) ?? "light";
-    setTheme(savedTheme);
-    setHtmlTheme(savedTheme);
-  }, []);
-
-  // persist theme
-  useEffect(() => {
-    localStorage.setItem("theme", theme);
-    setHtmlTheme(theme);
-  }, [theme]);
+  const { theme, setTheme } = useTheme();
 
   function switchLocale(nextLocale: Locale) {
     if (nextLocale === locale) return;
 
-    // update provider state (instant UI update)
     setLocale(nextLocale);
 
-    // update cookie for SSR
     setLocaleCookie(nextLocale);
 
-    // update url: /en/... -> /sw/...
     const segments = pathname.split("/");
     segments[1] = nextLocale;
 
@@ -57,7 +35,6 @@ export default function LandingControls() {
 
   return (
     <div className="flex items-center gap-2">
-      {/* Theme toggle */}
       <div className="flex items-center rounded-full border border-black/15 bg-white px-1 py-1 text-xs dark:border-white/15 dark:bg-black">
         <button
           onClick={() => setTheme("light")}
@@ -82,7 +59,6 @@ export default function LandingControls() {
         </button>
       </div>
 
-      {/* Language toggle */}
       <div className="flex items-center rounded-full border border-black/15 bg-white px-1 py-1 text-xs dark:border-white/15 dark:bg-black">
         <button
           onClick={() => switchLocale("en")}

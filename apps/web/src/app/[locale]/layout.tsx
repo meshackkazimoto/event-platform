@@ -4,6 +4,7 @@ import "@event-platform/ui/globals.css";
 
 import type { Locale } from "@event-platform/locale";
 import { LocaleProvider } from "@/providers/locale-provider";
+import { ThemeProvider } from "@/providers/theme-provider";
 import QueryProvider from "@/providers/query-provider";
 
 const poppins = Poppins({
@@ -43,8 +44,26 @@ export default async function LocaleRootLayout({
       <body
         className={`${poppins.variable} ${jetbrains.variable} font-mono antialiased`}
       >
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var savedTheme = localStorage.getItem("theme");
+                  if (savedTheme === "dark" || (!savedTheme && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+                    document.documentElement.classList.add("dark");
+                  } else {
+                    document.documentElement.classList.remove("dark");
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
         <QueryProvider>
-          <LocaleProvider initialLocale={locale}>{children}</LocaleProvider>
+          <LocaleProvider initialLocale={locale}>
+            <ThemeProvider>{children}</ThemeProvider>
+          </LocaleProvider>
         </QueryProvider>
       </body>
     </html>
