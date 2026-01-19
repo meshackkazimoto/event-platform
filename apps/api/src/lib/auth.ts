@@ -19,7 +19,6 @@ export function verifyToken(token: string): AuthPayload {
   try {
     const decoded = jwt.verify(token, getJwtSecret());
 
-    // jwt.verify can return string | object, so validate shape
     if (
       !decoded ||
       typeof decoded !== "object" ||
@@ -31,7 +30,6 @@ export function verifyToken(token: string): AuthPayload {
 
     return decoded as AuthPayload;
   } catch (err) {
-    // any JWT parsing/validation error becomes Unauthorized
     if (err instanceof JsonWebTokenError) {
       throw new Error("Unauthorized");
     }

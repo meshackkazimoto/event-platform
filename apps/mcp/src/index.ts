@@ -7,7 +7,6 @@ import { createInvitationsBulkTool } from "./tools/create-invitations-bulk";
 import { scanTicketTool } from "./tools/scan-ticket";
 
 async function main() {
-  // IMPORTANT: use stderr for logs
   console.error("[mcp] MCP Server running...");
 
   const server = new McpServer({
