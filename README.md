@@ -34,7 +34,7 @@ This project uses **pnpm** workspaces and **Turborepo** for build system orchest
 1.  **Clone the repository**:
 
     ```bash
-    git clone <repository-url>
+    git clone https://github.com/kazimoto5520/event-platform.git
     cd event-platform
     ```
 
