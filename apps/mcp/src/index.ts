@@ -1,17 +1,54 @@
-import "dotenv/config"
-import { createLoggerWithContext } from "@event-platform/logger";
-import { createMcpServer } from "./server";
+import "dotenv/config";
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 
-const log = createLoggerWithContext("mcp-server");
+import { createEventTool } from "./tools/create-event";
+import { createInvitationsBulkTool } from "./tools/create-invitations-bulk";
+import { scanTicketTool } from "./tools/scan-ticket";
 
 async function main() {
-    log.info("Creating MCP server...");
+  // IMPORTANT: use stderr for logs
+  console.error("[mcp] MCP Server running...");
 
-    const server = createMcpServer();
-    await server.start();
+  const server = new McpServer({
+    name: "event-platform-mcp",
+    version: "1.0.0",
+  });
+
+  const tools = [
+    createEventTool(),
+    createInvitationsBulkTool(),
+    scanTicketTool(),
+  ];
+
+  for (const tool of tools) {
+    server.registerTool(
+      tool.name,
+      {
+        description: tool.description,
+        inputSchema: tool.inputSchema,
+      },
+      async (input: any) => {
+        const result = await tool.run(input);
+
+        console.error(`[mcp] Tool ${tool.name} called`, result);
+
+        return {
+          content: [
+            {
+              type: "text" as const,
+              text: JSON.stringify(result, null, 2),
+            },
+          ],
+        };
+      },
+    );
+  }
+
+  await server.connect(new StdioServerTransport());
 }
 
 main().catch((err) => {
-    log.error("MCP failed to start:", err);
-    process.exit(1);
+  console.error("[mcp] MCP failed to start:", err);
+  process.exit(1);
 });

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { invitationsApi } from "@event-platform/api-client";
 import { getPlatformClient } from "../lib/client";
+import { zodToJsonSchema } from "zod-to-json-schema";
 
 const schema = z.object({
   token: z.string().optional(),
@@ -20,7 +21,7 @@ export function createInvitationsBulkTool() {
   return {
     name: "createInvitationsBulk",
     description: "Create invitations in bulk for an event",
-    inputSchema: schema,
+    inputSchema: (schema),
     async run(input: unknown) {
       const data = schema.parse(input);
 

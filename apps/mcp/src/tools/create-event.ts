@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { eventsApi } from "@event-platform/api-client";
 import { getPlatformClient } from "../lib/client";
+import { zodToJsonSchema } from "zod-to-json-schema";
 
 const schema = z.object({
   token: z.string().optional(),
@@ -15,7 +16,7 @@ export function createEventTool() {
   return {
     name: "createEvent",
     description: "Create a new event",
-    inputSchema: schema,
+    inputSchema: (schema),
     async run(input: unknown) {
       const data = schema.parse(input);
 
