@@ -33,6 +33,10 @@ export type CreateInvitationsBulkRequest = z.infer<
   typeof createInvitationsBulkRequestSchema
 >;
 
+export type CreateInvitationsBulkRequestInput = z.input<
+  typeof createInvitationsBulkRequestSchema
+>;
+
 export const invitationResponseSchema = z.object({
   id: z.string(),
   eventId: z.string(),
