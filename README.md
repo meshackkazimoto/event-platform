@@ -1,305 +1,93 @@
-# 🎟️ Event Platform
+# Event Platform Monorepo
 
-<div align="center">
+The Event Platform is a comprehensive event management and access control system. It enables organizers to create events, issue invitations, and validate entry using secure QR codes. This monorepo contains all the applications and packages required for the platform.
 
-![Build](https://img.shields.io/badge/build-passing-brightgreen)
-![License](https://img.shields.io/badge/license-MIT-blue)
-![Monorepo](https://img.shields.io/badge/monorepo-turborepo-black)
-![Backend](https://img.shields.io/badge/backend-Next.js%20%2B%20Prisma-blue)
-![Database](https://img.shields.io/badge/database-PostgreSQL-blue)
-![Mobile](https://img.shields.io/badge/mobile-Flutter-blue)
+## Project Structure
 
-**A modern, secure event management platform with QR-based access control**
+This project uses **pnpm** workspaces and **Turborepo** for build system orchestration.
 
-[Features](#-features) • [Tech Stack](#-tech-stack) • [Getting Started](#-getting-started) • [API Docs](#-api-documentation) • [Roadmap](#-roadmap)
+### Applications (`apps/`)
 
-</div>
+- **web**: The main web application for event organizers and attendees. Built with Next.js, Tailwind CSS, and React Query.
+- **api**: The backend API service. Built with Next.js App Router, Prisma, and JWT authentication.
+- **mcp**: A Model Context Protocol (MCP) server that exposes platform tools to LLMs and other agents.
+- **mobile**: (Coming soon) A Flutter-based mobile scanner application.
 
----
+### Packages (`packages/`)
 
-## 📖 Overview
+- **api-client**: A shared type-safe API client for communicating with the backend.
+- **db**: Database configuration, Prisma schema, and client.
+- **ui**: Shared UI component library.
+- **validators**: Shared Zod types and validation schemas.
+- **logger**: Shared logging utilities.
+- **locale**: Internationalization strings and utilities.
+- **tsconfig**: Shared TypeScript configuration bases.
 
-Event Platform is a comprehensive event management and access control system designed for real-world operations. Built with security, auditability, and scalability at its core, it enables organizers to create events, issue invitations, and validate entry using secure QR codes with transaction-safe scanning.
+## Prerequisites
 
----
+- **Node.js** (v20 or higher recommended)
+- **pnpm** (Package manager)
+- **PostgreSQL** (Database)
 
-## ✨ Features
+## Getting Started
 
-### 🔐 **Authentication & Authorization**
-- JWT-based secure authentication
-- Role-based access control with three distinct roles:
-  - **ADMIN** – Complete system administration
-  - **ORGANIZER** – Event and invitation management
-  - **SCANNER** – QR code validation at entry points
+1.  **Clone the repository**:
 
-### 🗓️ **Event Lifecycle Management**
-- Explicit event state machine with controlled transitions:
-  ```
-  DRAFT → LIVE → COMPLETED
-          ↓
-       CANCELLED
-  ```
-- Events must be published (`LIVE`) before scanning is enabled
-- Prevents premature or invalid entry attempts
+    ```bash
+    git clone <repository-url>
+    cd event-platform
+    ```
 
-### 🎫 **Smart Invitation System**
-- Unique invitation per guest with secure QR token generation
-- Comprehensive invitation states: `CREATED`, `SENT`, `CHECKED_IN`, `CANCELLED`, `EXPIRED`
-- Multiple ticket types: `REGULAR`, `VIP`, `STAFF`, `FREE`
-- Configurable entry limits and re-entry policies
+2.  **Install dependencies**:
+    From the root directory, install all project dependencies:
 
-### 📱 **Transaction-Safe QR Validation**
-- Atomic scan validation using database transactions
-- Real-time duplicate scan detection
-- Strict event and invitation state enforcement
-- Complete audit trail with scanner identity tracking
+    ```bash
+    pnpm install
+    ```
 
-### 🧾 **Full Audit & Traceability**
-- Every scan attempt logged with timestamp and metadata
-- Scanner identity, IP address, and result tracking
-- Built-in fraud detection and reporting capabilities
+3.  **Environment Setup**:
+    You will need to configure environment variables for the applications.
+    - Create a `.env` file in `apps/api` with `DATABASE_URL` and `JWT_SECRET`.
+    - Create a `.env` file in `apps/mcp` with `API_BASE_URL`.
+    - Refer to specific app `README.md` files for more details.
 
----
+4.  **Database Setup**:
+    initialize the database and push the schema:
+    ```bash
+    pnpm --filter db db:push
+    ```
 
-## 🧱 Tech Stack
+## Development
 
-<table>
-<tr>
-<td width="50%">
+To start the development environment for all applications:
 
-**Backend**
-- Next.js (App Router)
-- Prisma ORM
-- PostgreSQL
-- JWT Authentication
-- pnpm + Turborepo
-
-</td>
-<td width="50%">
-
-**Frontend**
-- Next.js (Web Dashboard)
-- Flutter (Mobile Scanner)
-
-</td>
-</tr>
-</table>
-
----
-
-## 🗂️ Project Structure
-
-```
-event-platform/
-├── apps/
-│   ├── api/              # Backend API (Next.js)
-│   ├── web/              # Web dashboard (Next.js)
-│   └── mobile/           # Scanner app (Flutter)
-│
-├── packages/
-│   └── db/               # Prisma schema & database client
-│
-├── pnpm-workspace.yaml
-├── turbo.json
-└── README.md
+```bash
+pnpm dev
 ```
 
----
+This will start the web app (localhost:3000) and the API (localhost:4000).
 
-## 🚀 Getting Started
+To run specific applications, use the `pnpm --filter` command:
 
-### Prerequisites
+```bash
+# Run only the web app
+pnpm --filter web dev
 
-Ensure you have the following installed:
-- **Node.js** 18 or higher
-- **pnpm** package manager
-- **PostgreSQL** database
+# Run only the api
+pnpm --filter api dev
 
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/event-platform.git
-   cd event-platform
-   ```
-
-2. **Install dependencies**
-   ```bash
-   pnpm install
-   ```
-
-3. **Set up environment variables**
-   
-   Create a `.env` file in the `apps/api` directory:
-   ```env
-   DATABASE_URL=postgresql://user:password@localhost:5432/event_platform
-   JWT_SECRET=your-secret-key
-   ```
-
-4. **Generate Prisma client**
-   ```bash
-   pnpm --filter @event-platform/db prisma generate
-   ```
-
-5. **Run database migrations**
-   ```bash
-   pnpm --filter @event-platform/db prisma migrate dev
-   ```
-
-6. **Start development servers**
-   ```bash
-   pnpm dev
-   ```
-
-Your applications will be available at:
-- **Web Dashboard**: http://localhost:3000
-- **API Server**: http://localhost:4000
-
----
-
-## 📡 API Documentation
-
-### 🔐 Authentication
-
-#### Login
-```http
-POST /api/auth/login
-Content-Type: application/json
-
-{
-  "phone": "255712345678",
-  "password": "password123"
-}
+# Run only the MCP server
+pnpm --filter mcp dev
 ```
 
-**Response:**
-```json
-{
-  "token": "<JWT_TOKEN>",
-  "user": {
-    "id": "uuid",
-    "fullName": "John Doe",
-    "role": "ORGANIZER"
-  }
-}
+## Building
+
+To build all apps and packages:
+
+```bash
+pnpm build
 ```
 
----
+## Architecture Overview
 
-### 🗓️ Events
-
-#### Create Event
-```http
-POST /api/events
-Authorization: Bearer <token>
-Roles: ADMIN, ORGANIZER
-
-{
-  "title": "Afro Night",
-  "venue": "City Hall",
-  "eventDate": "2026-01-20T18:00:00Z",
-  "allowReentry": false
-}
-```
-
-#### Publish Event
-```http
-POST /api/events/{eventId}/publish
-Authorization: Bearer <token>
-```
-Transitions event from `DRAFT` to `LIVE` status.
-
-#### List Events
-```http
-GET /api/events
-Authorization: Bearer <token>
-```
-
----
-
-### 🎫 Invitations
-
-#### Create Invitation
-```http
-POST /api/events/{eventId}/invitations
-Authorization: Bearer <token>
-
-{
-  "guestName": "Jane Doe",
-  "guestPhone": "255712345678",
-  "ticketType": "VIP",
-  "price": 20000,
-  "maxEntries": 1
-}
-```
-
-#### List Invitations
-```http
-GET /api/events/{eventId}/invitations
-Authorization: Bearer <token>
-```
-
----
-
-### 📱 Scan Validation
-
-#### Validate QR Code
-```http
-POST /api/scans/validate
-Authorization: Bearer <token>
-Role: SCANNER
-
-{
-  "qrToken": "6d7aa4e0052c92a3294949d91cf148ba"
-}
-```
-
-**Possible Responses:**
-```json
-{ "result": "SUCCESS", "guestName": "Jane Doe" }
-{ "result": "DUPLICATE", "message": "Already checked in" }
-{ "result": "EXPIRED", "message": "Invitation expired" }
-{ "result": "INVALID", "message": "Invalid QR code" }
-```
-
----
-
-## 🛣️ Roadmap
-
-- [x] Authentication & role-based access control
-- [x] Event lifecycle management
-- [x] Invitation & QR generation
-- [x] Transaction-safe scan validation
-- [ ] Web dashboard UI
-- [ ] Invitation delivery (SMS / WhatsApp)
-- [ ] Flutter scanner mobile app
-- [ ] Reports & analytics dashboard
-- [ ] Offline scanning support
-- [ ] Multi-language support
-- [ ] Email notifications
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 📧 Contact
-
-For questions or support, please open an issue or contact the maintainers.
-
----
-
-<div align="center">
-
-**Built with ❤️ using Next.js, Prisma, and Flutter**
-
-</div>
+The platform uses a centralized backend API (`apps/api`) that connects to a PostgreSQL database via Prisma (`packages/db`). Front-end applications like `apps/web` and `apps/mobile` interact with this API using the shared `packages/api-client`. The `apps/mcp` server acts as an alternative interface, allowing AI agents to perform actions on the platform using standard tools.
