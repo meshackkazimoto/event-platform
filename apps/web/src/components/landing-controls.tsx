@@ -1,15 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useLocale } from "@/providers/locale-provider";
 import { useTheme } from "@/providers/theme-provider";
 import type { Locale } from "@event-platform/locale";
 
-type Theme = "light" | "dark";
-
 function setLocaleCookie(locale: Locale) {
   document.cookie = `locale=${locale}; path=/; max-age=${60 * 60 * 24 * 365}`;
+}
+
+// Hydration-safe "isClient" without useEffect/setState (no ESLint warning)
+function useIsClient() {
+  return useSyncExternalStore(
+    () => () => {}, // subscribe (no-op)
+    () => true,     // client snapshot
+    () => false     // server snapshot
+  );
 }
 
 export default function LandingControls() {
@@ -19,11 +26,12 @@ export default function LandingControls() {
   const { locale, setLocale, t } = useLocale();
   const { theme, setTheme } = useTheme();
 
+  const isClient = useIsClient();
+
   function switchLocale(nextLocale: Locale) {
     if (nextLocale === locale) return;
 
     setLocale(nextLocale);
-
     setLocaleCookie(nextLocale);
 
     const segments = pathname.split("/");
@@ -35,30 +43,39 @@ export default function LandingControls() {
 
   return (
     <div className="flex items-center gap-2">
+      {/* Theme switcher */}
       <div className="flex items-center rounded-full border border-black/15 bg-white px-1 py-1 text-xs dark:border-white/15 dark:bg-black">
-        <button
-          onClick={() => setTheme("light")}
-          className={`rounded-full px-3 py-1 ${
-            theme === "light"
-              ? "bg-black text-white dark:bg-white dark:text-black"
-              : "text-black/70 hover:text-black dark:text-white/70 dark:hover:text-white"
-          }`}
-        >
-          {t.landing.ui.light}
-        </button>
+        {!isClient ? (
+          // placeholder to keep layout stable
+          <div className="px-3 py-1 text-black/50 dark:text-white/50">...</div>
+        ) : (
+          <>
+            <button
+              onClick={() => setTheme("light")}
+              className={`rounded-full px-3 py-1 ${
+                theme === "light"
+                  ? "bg-black text-white dark:bg-white dark:text-black"
+                  : "text-black/70 hover:text-black dark:text-white/70 dark:hover:text-white"
+              }`}
+            >
+              {t.landing.ui.light}
+            </button>
 
-        <button
-          onClick={() => setTheme("dark")}
-          className={`rounded-full px-3 py-1 ${
-            theme === "dark"
-              ? "bg-black text-white dark:bg-white dark:text-black"
-              : "text-black/70 hover:text-black dark:text-white/70 dark:hover:text-white"
-          }`}
-        >
-          {t.landing.ui.dark}
-        </button>
+            <button
+              onClick={() => setTheme("dark")}
+              className={`rounded-full px-3 py-1 ${
+                theme === "dark"
+                  ? "bg-black text-white dark:bg-white dark:text-black"
+                  : "text-black/70 hover:text-black dark:text-white/70 dark:hover:text-white"
+              }`}
+            >
+              {t.landing.ui.dark}
+            </button>
+          </>
+        )}
       </div>
 
+      {/* Locale switcher */}
       <div className="flex items-center rounded-full border border-black/15 bg-white px-1 py-1 text-xs dark:border-white/15 dark:bg-black">
         <button
           onClick={() => switchLocale("en")}
